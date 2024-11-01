@@ -1,0 +1,15 @@
+# Xcode
+DerivedData/
+*.xcworkspace
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+.idea/
+
+# Swift Packages
+.build/
+
+# SwiftPM
+Packages
+Package.pins
