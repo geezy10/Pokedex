@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct PokedexApp: App {
     var body: some Scene {
         WindowGroup {
-            PokemonListView(pokemons: [])
+            PokemonListView(/*pokemons: []*/)
                 .modelContainer(for: [PokemonModel.self])
         }
     }

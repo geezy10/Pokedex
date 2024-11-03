@@ -5,46 +5,71 @@
 //  Created by Niklas gottlieb on 01.11.24.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct PokemonListView: View {
-    
-    @State var pokemons: [PokemonModel] = []
+
+    //    @Query(sort: \PokemonModel.name)
+    @Query var pokemons: [PokemonModel]
     @State var searchText = ""
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
-    
+
     var body: some View {
+
         NavigationView {
-            List(pokemons, id: \.name) { pokemon in
-                Text(pokemon.name)
+            List(filteredPokemons) { pokemon in
+                Text(pokemon.name.capitalized)
             }
             .searchable(text: $searchText)
-            //if data is loaded into onAppear, API will be called unnessecary bcs it wont change that much, for that the caching
             .onAppear {
-                //caching, otherwise it will load every 100 pokemons every time the app is launched
-                if pokemons.count == 0 {
-                    pokeAPI.getPokemons() { pokemonDTO in
-                        let pokemon = PokemonModel (name: pokemonDTO.name, url: pokemonDTO.url)
-                        modelContext.insert(pokemon)
-                        pokemons.append(pokemon)
-                    }
+                print("pokemons count in SwiftData: \(pokemons.count)")
+                if pokemons.isEmpty {
+                    fetchfromAPI()
+                } else {
+                    print("Loaded from local storage")
                 }
+
+            }  //.navigationDocument(<#T##url: URL##URL#>)
+            .navigationTitle("Pokedex")
+
+        }
+    }
+
+    
+    private  func fetchfromAPI() {
+        print("Loading from API...")
+        pokeAPI.getPokemons { pokemonDTO in
+            if !pokemons.contains(where: {
+                $0.name == pokemonDTO.name
+            } ) {
+                let pokemon = PokemonModel(
+                    name: pokemonDTO.name, url: pokemonDTO.url)
+                modelContext.insert(pokemon)  // Save to SwiftData
+                //                    pokemons.append(pokemon)
+            }  else { print("Duplicate detected, skipping \(pokemonDTO.name)")}
+        }
+
+    }
+
+    var filteredPokemons: [PokemonModel] {
+        if searchText.isEmpty {
+            return pokemons
+        } else {
+            return pokemons.filter {
+                $0.name.lowercased().contains(searchText.lowercased())
             }
-            .navigationTitle("Gotta catch em all")
+
         }
     }
 }
 
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View{
-            PokemonListView(pokemons: [])
-//                .preferredColorScheme(.dark)
-//                .previewDisplayName("View List in Dark Mode")
-            
-        }
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        PokemonListView( /*pokemons:[] */)
+            .preferredColorScheme(.dark)
+            .previewDisplayName("View List in Dark Mode")
+
     }
-
-
-
+}

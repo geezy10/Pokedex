@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-@Model
+@Model // Stored in SwiftData (local database)
 
 //own models to not have the objects from the API 
 class PokemonModel {
