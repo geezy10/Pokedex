@@ -47,6 +47,7 @@ struct PokemonListView: View {
                 let pokemon = PokemonModel(
                     name: pokemonDTO.name, url: pokemonDTO.url)
                 modelContext.insert(pokemon)  // Save to SwiftData
+                print("there are \(pokemons.count) pokemons saved in SwiftData")
                 //                    pokemons.append(pokemon)
             }  else { print("Duplicate detected, skipping \(pokemonDTO.name)")}
         }
@@ -69,7 +70,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         PokemonListView( /*pokemons:[] */)
             .preferredColorScheme(.dark)
-            .previewDisplayName("View List in Dark Mode")
+          //  .previewDisplayName("View List in Dark Mode")
 
     }
 }

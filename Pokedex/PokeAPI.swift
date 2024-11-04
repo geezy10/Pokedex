@@ -22,8 +22,9 @@ struct PokemonDTO: Codable {
 }
 
 class PokeAPI {
+    
     //to cache pokemons, so we don´t make unnessecary API calls
-    private var cachedPokemons: [PokemonDTO]?
+     var cachedPokemons: [PokemonDTO]?
 
     func getPokemons(completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
@@ -33,12 +34,12 @@ class PokeAPI {
             }
             return
         }
-
+        	
         //guard checks if the URL is available, guards that it don´t crash, also possible with just an if
-        guard
+       guard
             let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100")
-        else {
-            print("Invalid URL")
+           else {
+                    print("Invalid URL")
             return
         }
 
@@ -57,6 +58,7 @@ class PokeAPI {
 
             //store it in the cache
             self.cachedPokemons = pokemons.results
+        print("stored \(pokemons.results.count) pokemons in cachedPokemons")
 
             //UI Updates must happen on the main thread
             DispatchQueue.main.async {
