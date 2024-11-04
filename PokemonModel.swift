@@ -16,6 +16,7 @@ class PokemonModel {
     var id: UUID
     var name: String
     var url: String
+    var image: Data?
 
     init(name: String, url: String){
         self.id = UUID()

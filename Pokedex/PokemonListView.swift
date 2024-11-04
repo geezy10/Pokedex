@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PokemonListView: View {
 
-    //    @Query(sort: \PokemonModel.name)
+   // @Query(sort: \PokemonModel.name)
     @Query var pokemons: [PokemonModel]
     @State var searchText = ""
     @Environment(\.modelContext) var modelContext
@@ -20,7 +20,10 @@ struct PokemonListView: View {
 
         NavigationView {
             List(filteredPokemons) { pokemon in
-                Text(pokemon.name.capitalized)
+                HStack {
+                    Text(pokemon.name.capitalized)
+                    PokeIconView(pokemon: pokemon)
+                }
             }
             .searchable(text: $searchText)
             .onAppear {
@@ -70,7 +73,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         PokemonListView( /*pokemons:[] */)
             .preferredColorScheme(.dark)
-          //  .previewDisplayName("View List in Dark Mode")
+            .previewDisplayName("View List in Dark Mode")
 
     }
 }

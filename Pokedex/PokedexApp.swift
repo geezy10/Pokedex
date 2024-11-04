@@ -17,3 +17,4 @@ struct PokedexApp: App {
         }
     }
 }
+
