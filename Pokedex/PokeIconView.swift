@@ -15,7 +15,7 @@ struct PokeIconView: View {
         if let imageData = pokemon.image {
             Image(uiImage: UIImage(data: imageData)!)
         } else {
-            Text("(a wild haris appeared)")
+            Text("🥸")
                 
         }}
 }

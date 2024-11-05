@@ -17,10 +17,15 @@ class PokemonModel {
     var name: String
     var url: String
     var image: Data?
-
+//    var weight: String
+//    var height: String
+    
     init(name: String, url: String){
         self.id = UUID()
         self.name = name
         self.url = url
-    }
-}
+        self.image = nil
+        //        self.weight = weight
+        //        self.height = height
+    }}
+

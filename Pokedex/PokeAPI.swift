@@ -19,11 +19,13 @@ struct PokemonsDTO: Codable {
 struct PokemonDTO: Codable {
     let name: String
     let url: String
+//    let weight: Double
+//    let height: Double
 }
 
 struct PokemonsDetailDTO: Codable {
-    let sprites: [PokemonDetailDTO]
-}
+    let sprites: PokemonDetailDTO
+}	
 
 
 struct PokemonDetailDTO: Codable {
@@ -32,8 +34,8 @@ struct PokemonDetailDTO: Codable {
 
 class PokeAPI {
     
-    //to cache pokemons, so we don´t make unnessecary API calls
-    var cachedPokemons: [PokemonDTO]?
+    //to cache pokemons, so we don´t make unnessecary API calls, private(set) -> read only property
+    private(set) var cachedPokemons: [PokemonDTO]?
     
     func getPokemons(completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
@@ -46,7 +48,7 @@ class PokeAPI {
         
         //guard checks if the URL is available, guards that it don´t crash, also possible with just an if
         guard
-            let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100")
+            let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
         else {
             print("Invalid URL")
             return
@@ -106,4 +108,22 @@ class PokeAPI {
     }
 }
 
+
+
+
+
+
+
+
+class ImageAPI {
+    func getData(url:String, completion: @escaping(Data?) -> Void) {
+        guard let url = URL(string: url) else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                completion(data)
+            }
+        }.resume()
+    }
+}
 
