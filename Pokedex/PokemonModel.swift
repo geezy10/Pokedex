@@ -6,23 +6,23 @@
 //
 
 import Foundation
-import SwiftUI
 import SwiftData
+import SwiftUI
 
-@Model // Stored in SwiftData (local database)
+@Model  // Stored in SwiftData (local database)
 
-//own models to not have the objects from the API 
+//own models to not have the objects from the API
 class PokemonModel {
     var id: Int
     var name: String
     var url: String?
     var imageURL: String?
-    
-    init(id: Int,name: String, url: String/*, imageURL: String*/){
+
+    init(id: Int, name: String, url: String, imageURL: String) {
         self.id = id
         self.name = name
         self.url = url
-//        self.imageURL = imageURL
+        self.imageURL = imageURL
 
-    }}
-
+    }
+}

@@ -25,7 +25,6 @@ struct PokemonListView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 200, height: 100)
-                    //                        .padding(10)
 
                 }
 
@@ -36,24 +35,44 @@ struct PokemonListView: View {
 
                 List(filteredPokemons) { pokemon in
                     HStack {
-                        Text(pokemon.id.description)
-                        Text(pokemon.name.capitalized)
-                        PokeIconView(pokemon: pokemon)
+                        if let imageURL = pokemon.imageURL,
+                            let url = URL(string: imageURL)
+                        {
+                            Text("#"  + "\(pokemon.id)")
+                            Text(pokemon.name.capitalized)
+                                .fontWeight(.bold)
+                            Spacer()
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+
+                            } placeholder: {
+                                Text("Loading...")
+                            }
+                        } else {
+                            Text("Image not available")
+                            // .frame(width: 50, height: 50)
+                        }
+
                     }
-                }
-                .onAppear {
-                    print("pokemons count in SwiftData: \(pokemons.count)")
-                    if pokemons.isEmpty {
-                        fetchfromAPI()
-                    } else {
-                        print("Loaded from local storage")
-                    }
 
                 }
+            }
 
-            }  //.searchable(text: $searchText)
+            .onAppear {
+                print("pokemons count in SwiftData: \(pokemons.count)")
+                if pokemons.isEmpty {
+                    fetchfromAPI()
+                } else {
+                    print("Loaded from local storage")
+                }
 
-        }
+            }
+
+        }  //.searchable(text: $searchText)
+
     }
 
     private func fetchfromAPI() {
@@ -66,10 +85,12 @@ struct PokemonListView: View {
                     let pokemon = PokemonModel(
                         id: detailDTO.id,
                         name: pokemonDTO.name,
-                        url: pokemonDTO.url
-                       /* imageURL: detailDTO.front_default ?? "default url"*/)
+                        url: pokemonDTO.url,
+                        imageURL: detailDTO.sprites.frontDefault ?? "")
                     modelContext.insert(pokemon)  // Save to SwiftData
-                    print("Inserted \(pokemon.name) with ID \(pokemon.id) into SwiftData") // Debug print
+                    print(
+                        "Inserted \(pokemon.name) with ID \(pokemon.id) into SwiftData"
+                    )  // Debug print
                 }
             }
         }
@@ -85,14 +106,14 @@ struct PokemonListView: View {
         }
     }
 
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
+}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
 
-            PokemonListView( /*pokemons:[] */)
-                .modelContainer(for: [PokemonModel.self])
-                .preferredColorScheme(.dark)
-                .previewDisplayName("View List in Dark Mode")
+        PokemonListView( /*pokemons:[] */)
+            .modelContainer(for: [PokemonModel.self])
+            .preferredColorScheme(.dark)
+            .previewDisplayName("View List in Dark Mode")
 
-        }
     }
 }

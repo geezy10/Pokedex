@@ -24,20 +24,27 @@ struct PokemonDTO: Codable {
 
 struct PokemonsDetailDTO: Codable {
     let sprites: PokemonDetailDTO
-}	
+}
 
+struct Sprites: Codable {
+    let frontDefault: String?
+
+    enum CodingKeys: String, CodingKey {
+        case frontDefault = "front_default"
+    }
+}
 
 struct PokemonDetailDTO: Codable {
     let id: Int
-    let front_default: String?
+    let sprites: Sprites
 }
 
 class PokeAPI {
-    
+
     //to cache pokemons, so we don´t make unnessecary API calls, private(set) -> read only property
     private(set) var cachedPokemons: [PokemonDTO]?
     //let  sortedPokemons = cachedPokemons?.sorted { $0.name < $1.name}
-    
+
     func getPokemons(completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
         if let cachedPokemons = cachedPokemons {
@@ -46,7 +53,7 @@ class PokeAPI {
             }
             return
         }
-        
+
         //guard checks if the URL is available, guards that it don´t crash, also possible with just an if
         guard
             let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
@@ -54,7 +61,7 @@ class PokeAPI {
             print("Invalid URL")
             return
         }
-        
+
         //asynchron network request running in the background without blocking the UI thread
         URLSession.shared.dataTask(with: url) {
             (data: Data?, response: URLResponse?, error: Error?) in  //represent the response from the API
@@ -63,17 +70,15 @@ class PokeAPI {
                 print("No data received from API")
                 return
             }
-            
+
             //tries to decode the json in pokemonDTO strucure
             let pokemons = try! JSONDecoder().decode(
                 PokemonsDTO.self, from: data)
-            
+
             //store it in the cache
             self.cachedPokemons = pokemons.results
             print("stored \(pokemons.results.count) pokemons in cachedPokemons")
-            
-            
-            
+
             //UI Updates must happen on the main thread
             DispatchQueue.main.async {
                 for pokemonDTO in pokemons.results {
@@ -82,17 +87,17 @@ class PokeAPI {
             }
         }.resume()
     }
-    
-    
-    
-    func getDetail(url: String, completion: @escaping (PokemonDetailDTO) -> Void) {
+
+    func getDetail(
+        url: String, completion: @escaping (PokemonDetailDTO) -> Void
+    ) {
         guard
             let url = URL(string: url)
         else {
             print("Invalid URL")
             return
         }
-        
+
         URLSession.shared.dataTask(with: url) {
             (data: Data?, response: URLResponse?, error: Error?) in
             guard let data = data
@@ -102,8 +107,7 @@ class PokeAPI {
             }
             let pokemonDetailDTO = try! JSONDecoder().decode(
                 PokemonDetailDTO.self, from: data)
-            
-            
+
             DispatchQueue.main.async {
                 completion(pokemonDetailDTO)
             }
@@ -111,17 +115,10 @@ class PokeAPI {
     }
 }
 
-
-
-
-
-
-
-
 class ImageAPI {
-    func getData(url:String, completion: @escaping(Data?) -> Void) {
+    func getData(url: String, completion: @escaping (Data?) -> Void) {
         guard let url = URL(string: url) else { return }
-        
+
         URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
                 completion(data)
@@ -129,4 +126,3 @@ class ImageAPI {
         }.resume()
     }
 }
-
