@@ -12,10 +12,10 @@ struct PokeIconView: View {
     
     @Bindable var pokemon: PokemonModel
     var body: some View {
-        if let imageData = pokemon.image {
-            Image(uiImage: UIImage(data: imageData)!)
-        } else {
-            Text("🥸")
-                
-        }}
+        //        if let imageData = pokemon.image {
+        //            Image(uiImage: UIImage(data: imageData)!)
+        //        } else {
+        Text("🥸")
+        
+    }
 }

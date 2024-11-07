@@ -19,8 +19,7 @@ struct PokemonsDTO: Codable {
 struct PokemonDTO: Codable {
     let name: String
     let url: String
-//    let weight: Double
-//    let height: Double
+
 }
 
 struct PokemonsDetailDTO: Codable {
@@ -29,6 +28,7 @@ struct PokemonsDetailDTO: Codable {
 
 
 struct PokemonDetailDTO: Codable {
+    let id: Int
     let front_default: String?
 }
 
@@ -36,6 +36,7 @@ class PokeAPI {
     
     //to cache pokemons, so we don´t make unnessecary API calls, private(set) -> read only property
     private(set) var cachedPokemons: [PokemonDTO]?
+    //let  sortedPokemons = cachedPokemons?.sorted { $0.name < $1.name}
     
     func getPokemons(completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
@@ -70,6 +71,8 @@ class PokeAPI {
             //store it in the cache
             self.cachedPokemons = pokemons.results
             print("stored \(pokemons.results.count) pokemons in cachedPokemons")
+            
+            
             
             //UI Updates must happen on the main thread
             DispatchQueue.main.async {

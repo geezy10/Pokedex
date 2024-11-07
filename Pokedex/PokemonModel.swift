@@ -13,19 +13,16 @@ import SwiftData
 
 //own models to not have the objects from the API 
 class PokemonModel {
-    var id: UUID
+    var id: Int
     var name: String
-    var url: String
-    var image: Data?
-//    var weight: String
-//    var height: String
+    var url: String?
+    var imageURL: String?
     
-    init(name: String, url: String){
-        self.id = UUID()
+    init(id: Int,name: String, url: String/*, imageURL: String*/){
+        self.id = id
         self.name = name
         self.url = url
-        self.image = nil
-        //        self.weight = weight
-        //        self.height = height
+//        self.imageURL = imageURL
+
     }}
 

@@ -10,8 +10,7 @@ import SwiftUI
 
 struct PokemonListView: View {
 
-    // @Query(sort: \PokemonModel.name)
-    @Query var pokemons: [PokemonModel]
+    @Query(sort: \PokemonModel.id) var pokemons: [PokemonModel]
     @State var searchText = ""
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
@@ -25,18 +24,19 @@ struct PokemonListView: View {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 350, height: 100)
-                        .padding(10)
+                        .frame(width: 200, height: 100)
+                    //                        .padding(10)
 
                 }
 
-                TextField("Search Pokémon", text: $searchText)
+                TextField("Search Pokemon", text: $searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                     .padding(.top, 5)
 
                 List(filteredPokemons) { pokemon in
                     HStack {
+                        Text(pokemon.id.description)
                         Text(pokemon.name.capitalized)
                         PokeIconView(pokemon: pokemon)
                     }
@@ -62,40 +62,37 @@ struct PokemonListView: View {
             if !pokemons.contains(where: {
                 $0.name == pokemonDTO.name
             }) {
-                let pokemon = PokemonModel(
-                    name: pokemonDTO.name, url: pokemonDTO.url)
-                modelContext.insert(pokemon)  // Save to SwiftData
-                if let cached = pokeAPI.cachedPokemons, cached.isEmpty {
-                    print(
-                        "there are \(pokemons.count) pokemons saved in SwiftData"
-                    )
+                pokeAPI.getDetail(url: pokemonDTO.url) { detailDTO in
+                    let pokemon = PokemonModel(
+                        id: detailDTO.id,
+                        name: pokemonDTO.name,
+                        url: pokemonDTO.url
+                       /* imageURL: detailDTO.front_default ?? "default url"*/)
+                    modelContext.insert(pokemon)  // Save to SwiftData
+                    print("Inserted \(pokemon.name) with ID \(pokemon.id) into SwiftData") // Debug print
                 }
-                //                    pokemons.append(pokemon)
-            } else {
-                print("Duplicate detected, skipping \(pokemonDTO.name)")
             }
         }
-
     }
 
     var filteredPokemons: [PokemonModel] {
         if searchText.isEmpty {
-            return pokemons
+            return pokemons  // Return sorted list if no search text
         } else {
             return pokemons.filter {
                 $0.name.lowercased().contains(searchText.lowercased())
             }
-
         }
     }
-}
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonListView( /*pokemons:[] */)
-            .modelContainer(for: [PokemonModel.self])
-            .preferredColorScheme(.dark)
-            .previewDisplayName("View List in Dark Mode")
+    struct ContentView_Previews: PreviewProvider {
+        static var previews: some View {
 
+            PokemonListView( /*pokemons:[] */)
+                .modelContainer(for: [PokemonModel.self])
+                .preferredColorScheme(.dark)
+                .previewDisplayName("View List in Dark Mode")
+
+        }
     }
 }
