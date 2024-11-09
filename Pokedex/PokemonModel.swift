@@ -11,10 +11,11 @@ class PokemonModel {
     var weight: Int
     var imageURL: String?
     var stats: [StatModel]  // Use StatModel for local storage
+//    var types: [TypeModel]
 
     init(
         id: Int, name: String, url: String, imageURL: String, weight: Int,
-        height: Int, stats: [StatModel]
+        height: Int, stats: [StatModel]/*, types: [TypeModel]*/
     ) {
         self.id = id
         self.name = name
@@ -23,6 +24,7 @@ class PokemonModel {
         self.stats = stats
         self.height = height
         self.weight = weight
+//        self.types = types
     }
 
     var hp: Int {
@@ -55,10 +57,21 @@ struct StatModel: Codable {
     var baseStat: Int
     var effort: Int
     var statName: String
-
+    
     init(baseStat: Int, effort: Int, statName: String) {
         self.baseStat = baseStat
         self.effort = effort
         self.statName = statName
     }
 }
+//    struct TypeModel: Codable {
+//        var slot: Int        // The slot or order for the type (if Pokémon has multiple types)
+//        var typeName: String // The name of the type, like "fire" or "water"
+//        
+//        init(slot: Int, typeName: String) {
+//            self.slot = slot
+//            self.typeName = typeName
+//        }
+//    }
+//
+

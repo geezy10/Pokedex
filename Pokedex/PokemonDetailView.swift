@@ -24,6 +24,11 @@ struct PokemonDetailView: View {
 
             Text("Height: \(pokemon.height)")
                 .font(.title3)
+  
+//            // Display formatted types
+//            Text("Types: \(pokemon.types.map { $0.typeName.capitalized }.joined(separator: ", "))")
+//                .font(.title3)
+//                .foregroundColor(.secondary)
 
             if let imageURL = pokemon.imageURL, let url = URL(string: imageURL)
             {
@@ -75,6 +80,10 @@ struct PokemonDetailView: View {
             StatModel(baseStat: 65, effort: 0, statName: "special-defense"),
             StatModel(baseStat: 45, effort: 0, statName: "speed"),
         ]
+//        types: [
+//            TypeModel(slot: 1, typeName: "grass"),
+//            TypeModel(slot: 2, typeName: "poison"),
+//        ]
     )
     PokemonDetailView(pokemon: samplePokemon)
 }
