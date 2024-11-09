@@ -66,25 +66,43 @@ struct PokemonListView: View {
         }
     }
     
-    // Moved fetchfromAPI outside the body
-    private func fetchfromAPI() {
-        print("Loading from API...")
-        pokeAPI.getPokemons { pokemonDTO in
-            if !pokemons.contains(where: {
-                $0.name == pokemonDTO.name
-            }) {
-                pokeAPI.getDetail(url: pokemonDTO.url) { detailDTO in
-                    let pokemon = PokemonModel(
-                        id: detailDTO.id,
-                        name: pokemonDTO.name,
-                        url: pokemonDTO.url,
-                        imageURL: detailDTO.sprites.frontDefault ?? "")
+
+   private func fetchfromAPI() {
+    print("Loading from API...")
+    pokeAPI.getPokemons { pokemonDTO in
+        if !pokemons.contains(where: { $0.name == pokemonDTO.name }) {
+            pokeAPI.getDetail(url: pokemonDTO.url) { detailDTO in
+                // Map [Stat] to [StatModel]
+                let statsModels = detailDTO.stats.map { stat in
+                    StatModel(
+                        baseStat: stat.baseStat,
+                        effort: stat.effort,
+                        statName: stat.stat.name
+                    )
+                }
+                
+                // Create PokemonModel with mapped statsModels
+                let pokemon = PokemonModel(
+                    id: detailDTO.id,
+                    name: pokemonDTO.name,
+                    url: pokemonDTO.url,
+                    imageURL: detailDTO.sprites.frontDefault ?? "",
+                    weight: detailDTO.weight,
+                    height: detailDTO.height,
+                    stats: statsModels
+                )
+                
+                DispatchQueue.main.async {
                     modelContext.insert(pokemon)  // Save to SwiftData
                     print("Inserted \(pokemon.name) with ID \(pokemon.id) into SwiftData")
                 }
             }
         }
     }
+}
+
+
+
     
     var filteredPokemons: [PokemonModel] {
         if searchText.isEmpty {

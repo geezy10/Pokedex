@@ -7,25 +7,27 @@
 
 import Foundation
 
-//Data Transfer Object to represent the JSON response, Codeable to encode the JSON
+// Represents the main list response, containing an array of PokemonDTO
 struct PokemonsDTO: Codable {
     let results: [PokemonDTO]
-    //        let count: Int -> total number of pokemon
-    //        let next: String -> url for the next pages of result (100)
-    //        let previous: JSONNull?
-
 }
 
+// Represents each Pokemon item in the list
 struct PokemonDTO: Codable {
     let name: String
     let url: String
-
 }
 
-struct PokemonsDetailDTO: Codable {
-    let sprites: PokemonDetailDTO
+// Represents the detailed response for an individual Pokemon
+struct PokemonDetailDTO: Codable {
+    let id: Int
+    let sprites: Sprites
+    let weight: Int
+    let height: Int
+    let stats: [Stat]
 }
 
+// Represents the sprite/image URLs for a Pokemon
 struct Sprites: Codable {
     let frontDefault: String?
 
@@ -34,10 +36,25 @@ struct Sprites: Codable {
     }
 }
 
-struct PokemonDetailDTO: Codable {
-    let id: Int
-    let sprites: Sprites
+// Represents individual stat details for a Pokemon
+struct Stat: Codable {
+    let baseStat: Int
+    let effort: Int
+    let stat: StatName
+
+    enum CodingKeys: String, CodingKey {
+        case baseStat = "base_stat"
+        case effort
+        case stat
+    }
 }
+
+// Represents the stat name and URL, like "hp", "attack"
+struct StatName: Codable {
+    let name: String
+    let url: String
+}
+
 
 class PokeAPI {
 
@@ -71,19 +88,17 @@ class PokeAPI {
                 return
             }
 
-            //tries to decode the json in pokemonDTO strucure
-            let pokemons = try! JSONDecoder().decode(
-                PokemonsDTO.self, from: data)
-
-            //store it in the cache
-            self.cachedPokemons = pokemons.results
-            print("stored \(pokemons.results.count) pokemons in cachedPokemons")
-
-            //UI Updates must happen on the main thread
-            DispatchQueue.main.async {
-                for pokemonDTO in pokemons.results {
-                    completion(pokemonDTO)
+            do {
+                let pokemons = try JSONDecoder().decode(
+                    PokemonsDTO.self, from: data)
+                self.cachedPokemons = pokemons.results
+                DispatchQueue.main.async {
+                    for pokemonDTO in pokemons.results {
+                        completion(pokemonDTO)
+                    }
                 }
+            } catch {
+                print("Error decoding PokemonsDTO:", error)
             }
         }.resume()
     }
@@ -105,11 +120,14 @@ class PokeAPI {
                 print("No data received from API")
                 return
             }
-            let pokemonDetailDTO = try! JSONDecoder().decode(
-                PokemonDetailDTO.self, from: data)
-
-            DispatchQueue.main.async {
-                completion(pokemonDetailDTO)
+            do {
+                let pokemonDetailDTO = try JSONDecoder().decode(
+                    PokemonDetailDTO.self, from: data)
+                DispatchQueue.main.async {
+                    completion(pokemonDetailDTO)
+                }
+            } catch {
+                print("Error decoding PokemonDetailDTO:", error)
             }
         }.resume()
     }
