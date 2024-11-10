@@ -10,12 +10,13 @@ class PokemonModel {
     var height: Int
     var weight: Int
     var imageURL: String?
-    var stats: [StatModel]  // Use StatModel for local storage
-//    var types: [TypeModel]
+
+    @Relationship var stats: [StatModel]
+    @Relationship var types: [TypeModel]
 
     init(
         id: Int, name: String, url: String, imageURL: String, weight: Int,
-        height: Int, stats: [StatModel]/*, types: [TypeModel]*/
+        height: Int, stats: [StatModel], types: [TypeModel]
     ) {
         self.id = id
         self.name = name
@@ -24,7 +25,12 @@ class PokemonModel {
         self.stats = stats
         self.height = height
         self.weight = weight
-//        self.types = types
+        self.types = types
+    }
+
+    // Computed property to get a formatted string of type names
+    var typeNames: String {
+        types.map { $0.typeName.capitalized }.joined(separator: ", ")
     }
 
     var hp: Int {
@@ -52,26 +58,49 @@ class PokemonModel {
     }
 }
 
-// Define StatModel specifically for the local storage needs
-struct StatModel: Codable {
+@Model
+class StatModel: Identifiable {
+    var id = UUID()
     var baseStat: Int
     var effort: Int
     var statName: String
-    
+
     init(baseStat: Int, effort: Int, statName: String) {
         self.baseStat = baseStat
         self.effort = effort
         self.statName = statName
     }
 }
-//    struct TypeModel: Codable {
-//        var slot: Int        // The slot or order for the type (if Pokémon has multiple types)
-//        var typeName: String // The name of the type, like "fire" or "water"
-//        
-//        init(slot: Int, typeName: String) {
-//            self.slot = slot
-//            self.typeName = typeName
-//        }
-//    }
-//
+@Model
+class TypeModel: Identifiable {
+    var id = UUID()
+    var slot: Int
+    var typeName: String
 
+    init(slot: Int, typeName: String) {
+        self.slot = slot
+        self.typeName = typeName
+    }
+    var color: Color {
+        switch typeName.lowercased() {
+        case "grass": return .green
+        case "fire": return .red
+        case "water": return .blue
+        case "electric": return .yellow
+        case "ice": return .cyan
+        case "fighting": return .orange
+        case "poison": return .purple
+        case "ground": return .brown
+        case "flying": return .blue.opacity(0.5)
+        case "psychic": return .pink
+        case "bug": return .green.opacity(0.7)
+        case "rock": return .gray
+        case "ghost": return .purple.opacity(0.7)
+        case "dragon": return .indigo
+        case "dark": return .black
+        case "steel": return .gray.opacity(0.6)
+        case "fairy": return .pink.opacity(0.7)
+        default: return .gray
+        }
+    }
+}

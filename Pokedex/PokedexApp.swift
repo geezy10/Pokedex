@@ -12,8 +12,8 @@ import SwiftData
 struct PokedexApp: App {
     var body: some Scene {
         WindowGroup {
-            PokemonListView(/*pokemons: []*/)
-                .modelContainer(for: [PokemonModel.self])
+            PokemonListView()
+                .modelContainer(for: [PokemonModel.self, StatModel.self, TypeModel.self])
         }
     }
 }
