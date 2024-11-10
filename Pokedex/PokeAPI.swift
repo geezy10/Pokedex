@@ -25,18 +25,18 @@ struct PokemonDetailDTO: Codable {
     let weight: Int
     let height: Int
     let stats: [Stat]
-//    let types: [TypeElement]
+    let types: [TypeElement]
 }
-//
-//struct TypeElement: Codable {
-//    let slot: Int
-//    let type: TypeInfo
-//}
-// 
-//struct TypeInfo: Codable {
-//    let name: String
-//    let url: String
-//}
+
+struct TypeElement: Codable {
+    let slot: Int
+    let type: TypeInfo
+}
+
+struct TypeInfo: Codable {
+    let name: String
+    let url: String
+}
 
 // Represents the sprite/image URLs for a Pokemon
 struct Sprites: Codable {
@@ -142,14 +142,14 @@ class PokeAPI {
     }
 }
 
-//class ImageAPI {
-//    func getData(url: String, completion: @escaping (Data?) -> Void) {
-//        guard let url = URL(string: url) else { return }
-//
-//        URLSession.shared.dataTask(with: url) { data, response, error in
-//            DispatchQueue.main.async {
-//                completion(data)
-//            }
-//        }.resume()
-//    }
-//}
+class ImageAPI {
+    func getData(url: String, completion: @escaping (Data?) -> Void) {
+        guard let url = URL(string: url) else { return }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                completion(data)
+            }
+        }.resume()
+    }
+}

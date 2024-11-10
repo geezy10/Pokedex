@@ -12,10 +12,9 @@ struct PokemonListView: View {
 
     @Query(sort: \PokemonModel.id) var pokemons: [PokemonModel]
     @State var searchText = ""
-    @State private var dataLoaded = false
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
-//    let imageAPI = ImageAPI()
+    let imageAPI = ImageAPI()
 
     var body: some View {
 
@@ -38,26 +37,55 @@ struct PokemonListView: View {
                         destination: PokemonDetailView(pokemon: pokemon)
                     ) {
                         HStack {
+                            VStack(alignment: .leading, spacing: 8) {
+                                //first row
+                                HStack {
+                                    Text("#\(pokemon.id)").font(.subheadline)
+                                        .foregroundColor(.gray)
+                                    Text(pokemon.name.capitalized)
+                                        .font(.headline).foregroundColor(
+                                            .primary)
+                                }
+                                //second row
+                                HStack(spacing: 6) {
+                                    ForEach(pokemon.types) { type in
+                                        HStack(spacing: 4) {
+                                            Circle()
+                                                .fill(type.color)
+                                                .frame(width: 8, height: 8)
+                                            Text(type.typeName.capitalized)
+                                                .font(.footnote)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                }
+                            }
+                            Spacer()
+
+                            //image on the right
                             if let imageURL = pokemon.imageURL,
                                 let url = URL(string: imageURL)
                             {
-                                Text("#\(pokemon.id)")
-                                Text(pokemon.name.capitalized)
-                                Spacer()
                                 AsyncImage(url: url) { image in
                                     image
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 50, height: 50)
                                 } placeholder: {
-                                    Text("Loading...")
+                                    ProgressView()
                                 }
                             } else {
                                 Text("Image not available")
+                                    .frame(width: 50, height: 50)
                             }
                         }
+                        .padding(.vertical, 4)
+
                     }
+                    .listRowSeparator(.hidden)
+
                 }
+
                 .onAppear {
                     print("pokemons count in SwiftData: \(pokemons.count)")
                     if pokemons.isEmpty {
@@ -84,13 +112,13 @@ struct PokemonListView: View {
                         )
                     }
 
-//                    // Map [TypeElement] to [TypeModel]
-//                    let typeModels = detailDTO.types.map { typeElement in
-//                        TypeModel(
-//                            slot: typeElement.slot,
-//                            typeName: typeElement.type.name
-//                        )
-//                    }
+                    // Map [TypeElement] to [TypeModel]
+                    let typeModels = detailDTO.types.map { typeElement in
+                        TypeModel(
+                            slot: typeElement.slot,
+                            typeName: typeElement.type.name
+                        )
+                    }
 
                     // Create PokemonModel with mapped statsModels
                     let pokemon = PokemonModel(
@@ -100,16 +128,17 @@ struct PokemonListView: View {
                         imageURL: detailDTO.sprites.frontDefault ?? "",
                         weight: detailDTO.weight,
                         height: detailDTO.height,
-                        stats: statsModels
-//                        ,types: typeModels
+                        stats: statsModels,
+                        types: typeModels
                     )
 
                     DispatchQueue.main.async {
                         modelContext.insert(pokemon)  // Save to SwiftData
+                        try? modelContext.save()
                         print(
                             "Inserted \(pokemon.name) with ID \(pokemon.id) into SwiftData"
                         )
-                        dataLoaded = true
+
                     }
                 }
             }
@@ -126,8 +155,6 @@ struct PokemonListView: View {
         }
     }
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
