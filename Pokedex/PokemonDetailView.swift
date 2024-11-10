@@ -86,11 +86,14 @@ struct StatBarView: View {
     let value: Int
     let barColor: Color
 
+
+
     var body: some View {
         HStack {
             Text("\(statName):")
                 .font(.title2)
                 .frame(width: 100, alignment: .leading)
+
 
             ProgressView(value: Double(value), total: 255)
                 .progressViewStyle(LinearProgressViewStyle(tint: barColor))
@@ -119,6 +122,10 @@ struct StatBarView: View {
             StatModel(baseStat: 65, effort: 0, statName: "special-defense"),
             StatModel(baseStat: 45, effort: 0, statName: "speed"),
         ]
+//        types: [
+//            TypeModel(slot: 1, typeName: "grass"),
+//            TypeModel(slot: 2, typeName: "poison"),
+//        ]
     )
     PokemonDetailView(pokemon: samplePokemon)
 }
