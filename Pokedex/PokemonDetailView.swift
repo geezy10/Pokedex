@@ -19,30 +19,24 @@ struct PokemonDetailView: View {
                     ZStack {
                         Color.white
                             .opacity(0.7)
-                            .frame(width: 250, height: 160)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                        VStack {
-                            Text("ID: \(pokemon.id)")
+                            .frame(width: 250, height: 60)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        HStack {
+                            Text("# \(pokemon.id)")
                                 .font(.title)
 
-                            Text("Name: \(pokemon.name.capitalized)")
+                            Text("\(pokemon.name.capitalized)")
                                 .font(.title)
 
-                            Text("Weight: \(pokemon.weight)")
-                                .font(.title3)
-
-                            Text("Height: \(pokemon.height)")
-                                .font(.title3)
-
-                            Text("Type: \(pokemon.typeNames)")
-                                .font(.title3)
                         }
                     }
+                    .padding(.top, 5)
+                    
                     ZStack {
                         Color.white
                             .opacity(0.7)
                             .frame(width: 250, height: 250)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                         if let imageURL = pokemon.imageURL,
                             let url = URL(string: imageURL)
                         {
@@ -59,14 +53,37 @@ struct PokemonDetailView: View {
                                 .font(.caption)
                         }  //end of else
                     }  //end of zstack img
-                    .padding(.bottom)
-                    .padding(.top)
-
+                    .padding(.top, 5)
+                    
+                    ZStack{
+                        Color.white
+                            .opacity(0.7)
+                            .frame(width: 250, height: 130)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        VStack{
+                            let weight = Double(pokemon.weight) / 10
+                            let fWeight = String(format: "%.1f", weight)
+                            
+                            let height = Double(pokemon.height) / 10
+                            let fHeight = String(format: "%.1f", height)
+                            
+                            Text("Weight: \(fWeight) kg")
+                                .font(.title3)
+                            
+                            Text("Height: \(fHeight) m")
+                                .font(.title3)
+                            
+                            Text("Type: \(pokemon.typeNames)")
+                                .font(.title3)
+                        }
+                    }
+                    .padding(.top, 12)
+                    
                     ZStack {
                         Color.white
                             .opacity(0.7)
                             .frame(width: 330, height: 270)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                         VStack(alignment: .leading, spacing: 15) {
                             StatBarView(
                                 statName: "HP", value: pokemon.hp,
@@ -87,9 +104,10 @@ struct PokemonDetailView: View {
                                 statName: "Speed", value: pokemon.speed,
                                 barColor: .pink)
                         }
-                        .padding()
+                        
                     }  //end of zstack stats
-
+                    .padding(.top, 5)
+                    
                     Spacer()
                 }  // end of main vstack containing stats image and else
             }  //end of background zstack
