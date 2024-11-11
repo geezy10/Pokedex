@@ -160,7 +160,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
 
         PokemonListView()
-            .modelContainer(for: [PokemonModel.self])
+            .modelContainer(for: [PokemonModel.self, StatModel.self, TypeModel.self])
             .preferredColorScheme(.dark)
             .previewDisplayName("View List in Dark Mode")
 
