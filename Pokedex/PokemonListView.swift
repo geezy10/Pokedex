@@ -12,9 +12,11 @@ struct PokemonListView: View {
 
     @Query(sort: \PokemonModel.id) var pokemons: [PokemonModel]
     @State var searchText = ""
+    @State var selectedGen = 1
+    @State var showGenSelector = false
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
-    let imageAPI = ImageAPI()
+    //    let imageAPI = ImageAPI()
 
     var body: some View {
 
@@ -32,6 +34,19 @@ struct PokemonListView: View {
                     .padding(.horizontal)
                     .padding(.top, 5)
 
+                Button(action: {
+                    showGenSelector = true
+                }) {
+                    Text("Select Generation: Gen \(selectedGen)")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.black)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                }
+
                 List(filteredPokemons) { pokemon in
                     NavigationLink(
                         destination: PokemonDetailView(pokemon: pokemon)
@@ -47,7 +62,7 @@ struct PokemonListView: View {
                                             .primary)
                                 }
                                 //second row
-                                HStack(spacing: 6) {
+                                HStack(spacing: 4) {
                                     ForEach(pokemon.types) { type in
                                         HStack(spacing: 4) {
                                             Circle()
@@ -59,6 +74,7 @@ struct PokemonListView: View {
                                         }
                                     }
                                 }
+                                .padding(.vertical, 8)
                             }
                             Spacer()
 
@@ -87,20 +103,24 @@ struct PokemonListView: View {
                 }
 
                 .onAppear {
-                    print("pokemons count in SwiftData: \(pokemons.count)")
-                    if pokemons.isEmpty {
-                        fetchfromAPI()
-                    } else {
-                        print("Loaded from local storage")
+                    fetchfromAPI()
                     }
                 }
+            .sheet(isPresented: $showGenSelector) {
+                GenerationSelectorView(selectedGen: $selectedGen,showGenerationSelector: $showGenSelector,fetchfromAPI: fetchfromAPI)
             }
         }
     }
 
     private func fetchfromAPI() {
+        
+        for pokemon in pokemons {
+            modelContext.delete(pokemon)
+        }
+        try? modelContext.save()
+        
         print("Loading from API...")
-        pokeAPI.getPokemons { pokemonDTO in
+        pokeAPI.getPokemons(forGeneration: selectedGen) { pokemonDTO in
             if !pokemons.contains(where: { $0.name == pokemonDTO.name }) {
                 pokeAPI.getDetail(url: pokemonDTO.url) { detailDTO in
                     // Map [Stat] to [StatModel]
@@ -152,6 +172,54 @@ struct PokemonListView: View {
             return pokemons.filter {
                 $0.name.lowercased().contains(searchText.lowercased())
             }
+        }
+    }
+
+    struct GenerationSelectorView: View {
+        @Binding var selectedGen: Int
+        @Binding var showGenerationSelector: Bool
+        let fetchfromAPI: () -> Void
+
+        var body: some View {
+            VStack(spacing: 20) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    
+                    Text("Select Pokémon Generation")
+                        .font(.headline)
+                        .padding()
+                }
+                ForEach(1...9, id: \.self) { gen in
+                    Button(action: {
+                        selectedGen = gen
+                        showGenerationSelector = false
+                        fetchfromAPI()
+                    }) {
+                        Text("Generation \(gen)")
+                            .font(.title3)
+                            .foregroundColor(
+                                selectedGen == gen ? .white : .primary
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                selectedGen == gen
+                                    ? Color.blue : Color.gray.opacity(0.2)
+                            )
+                            .cornerRadius(10)
+                            .shadow(
+                                color: selectedGen == gen
+                                    ? .blue.opacity(0.3) : .clear, radius: 6,
+                                x: 0, y: 3)
+                    }
+                }
+
+                Button("Close") {
+                    showGenerationSelector = false
+                }
+                .padding()
+                .foregroundColor(.red)
+            }
+            .padding(10)
         }
     }
 }

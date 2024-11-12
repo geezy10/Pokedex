@@ -22,8 +22,8 @@ struct PokemonDTO: Codable {
 struct PokemonDetailDTO: Codable {
     let id: Int
     let sprites: Sprites
-    let weight: Int
-    let height: Int
+    let weight: Double
+    let height: Double
     let stats: [Stat]
     let types: [TypeElement]
 }
@@ -67,22 +67,51 @@ struct StatName: Codable {
 }
 
 class PokeAPI {
+    
 
     //to cache pokemons, so we don´t make unnessecary API calls, private(set) -> read only property
     private(set) var cachedPokemons: [PokemonDTO]?
 
-    func getPokemons(completion: @escaping (PokemonDTO) -> Void) {
+    func getPokemons(forGeneration generation: Int, completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
-        if let cachedPokemons = cachedPokemons {
-            for pokemon in cachedPokemons {
-                completion(pokemon)
-            }
-            return
-        }
+//        if let cachedPokemons = cachedPokemons {
+//            for pokemon in cachedPokemons {
+//                completion(pokemon)
+//            }
+//            return
+//        }
+//
+        cachedPokemons = nil
+        
+        let url: URL?
+               switch generation {
+               case 1:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
+               case 2:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100&offset=151")
+               case 3:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=135&offset=251")
+               case 4:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=107&offset=386")
+               case 5:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=156&offset=493")
+               case 6:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=72&offset=649")
+               case 7:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=88&offset=721")
+               case 8:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=96&offset=809")
+               case 9:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=105&offset=905")
+               default:
+                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
+               }
+
+        
 
         //guard checks if the URL is available, guards that it don´t crash, also possible with just an if
         guard
-            let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
+            let url = url 
         else {
             print("Invalid URL")
             return
@@ -142,14 +171,14 @@ class PokeAPI {
     }
 }
 
-class ImageAPI {
-    func getData(url: String, completion: @escaping (Data?) -> Void) {
-        guard let url = URL(string: url) else { return }
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                completion(data)
-            }
-        }.resume()
-    }
-}
+//class ImageAPI {
+//    func getData(url: String, completion: @escaping (Data?) -> Void) {
+//        guard let url = URL(string: url) else { return }
+//
+//        URLSession.shared.dataTask(with: url) { data, response, error in
+//            DispatchQueue.main.async {
+//                completion(data)
+//            }
+//        }.resume()
+//    }
+//}
