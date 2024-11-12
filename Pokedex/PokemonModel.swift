@@ -7,16 +7,16 @@ class PokemonModel {
     var id: Int
     var name: String
     var url: String?
-    var height: Int
-    var weight: Int
+    var height: Double
+    var weight: Double
     var imageURL: String?
 
     @Relationship var stats: [StatModel]
     @Relationship var types: [TypeModel]
 
     init(
-        id: Int, name: String, url: String, imageURL: String, weight: Int,
-        height: Int, stats: [StatModel], types: [TypeModel]
+        id: Int, name: String, url: String, imageURL: String, weight: Double,
+        height: Double, stats: [StatModel], types: [TypeModel]
     ) {
         self.id = id
         self.name = name
