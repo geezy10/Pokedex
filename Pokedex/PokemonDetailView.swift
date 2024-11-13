@@ -2,162 +2,199 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     let pokemon: PokemonModel
-
+    @State var flavorText: String? = nil
+    
     var body: some View {
         ZStack {
-
-            if let uiImage = UIImage(named: "pokedexBackground") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .ignoresSafeArea()
-                    .scaledToFill()
-                    .frame(minWidth: 0, maxWidth: .infinity)
-
-            }
+            // Background Gradient
+            LinearGradient(
+                gradient: Gradient(
+                    colors: pokemon.typeColors.count > 1
+                    ? pokemon.typeColors
+                    : [pokemon.typeColors.first ?? .red, .white]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
             ScrollView {
-                VStack {
-                    ZStack {
-                        Color.white
-                            .opacity(0.7)
-                            .frame(width: 250, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        HStack {
-                            Text("# \(pokemon.id)")
-                                .font(.title)
 
-                            Text("\(pokemon.name.capitalized)")
-                                .font(.title)
+                VStack(spacing: 20) {
+                    
+                    // Pokemon Image Card
+                    
+                    if let imageURL = pokemon.imageURL,
+                       let url = URL(string: imageURL)
+                    {
+                        AsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    } else {
+                        Text("No Image Available")
+                            .font(.caption)
+                    }
 
-                        }
-                    }
-                    .padding(.top, 5)
                     
+                    // Pokemon Info Card
                     ZStack {
-                        Color.white
-                            .opacity(0.7)
-                            .frame(width: 250, height: 250)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        if let imageURL = pokemon.imageURL,
-                            let url = URL(string: imageURL)
-                        {
-                            AsyncImage(url: url) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 150, height: 150)
-                            } placeholder: {
-                                ProgressView()
-                            }
-                        } else {  //end of let
-                            Text("No Image Available")
-                                .font(.caption)
-                        }  //end of else
-                    }  //end of zstack img
-                    .padding(.top, 5)
-                    
-                    ZStack{
-                        Color.white
-                            .opacity(0.7)
-                            .frame(width: 250, height: 130)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        VStack{
-                            let weight = Double(pokemon.weight) / 10
-                            let fWeight = String(format: "%.1f", weight)
-                            
-                            let height = Double(pokemon.height) / 10
-                            let fHeight = String(format: "%.1f", height)
-                            
-                            Text("Weight: \(fWeight) kg")
-                                .font(.title3)
-                            
-                            Text("Height: \(fHeight) m")
-                                .font(.title3)
-                            
-                            Text("Type: \(pokemon.typeNames)")
-                                .font(.title3)
-                        }
-                    }
-                    .padding(.top, 12)
-                    
-                    ZStack {
-                        Color.white
-                            .opacity(0.7)
-                            .frame(width: 330, height: 270)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        VStack(alignment: .leading, spacing: 15) {
-                            StatBarView(
-                                statName: "HP", value: pokemon.hp,
-                                barColor: .red)
-                            StatBarView(
-                                statName: "Att.", value: pokemon.attack,
-                                barColor: .orange)
-                            StatBarView(
-                                statName: "Def.", value: pokemon.defense,
-                                barColor: .yellow)
-                            StatBarView(
-                                statName: "Sp. Att.",
-                                value: pokemon.specialAttack, barColor: .blue)
-                            StatBarView(
-                                statName: "Sp. Def",
-                                value: pokemon.specialDefense, barColor: .green)
-                            StatBarView(
-                                statName: "Speed", value: pokemon.speed,
-                                barColor: .pink)
-                        }
+                        Color.black
+                            .opacity(0.8)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .shadow(radius: 10)
+                            .frame(width: 300, height: 180)
                         
-                    }  //end of zstack stats
-                    .padding(.top, 5)
+                        VStack(spacing: 8) {
+                            HStack {
+                                Text("#\(pokemon.id)").font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    .font(.title)
+                                Text(pokemon.name.capitalized)
+                                    .font(.system(size: 20, weight: .bold))
+                                    .font(.headline).foregroundColor(.primary)
+                                    .font(.largeTitle)
+                              
+                                 
+                                }.fixedSize()
+                            HStack(spacing: 4) {
+                            ForEach(pokemon.types) { type in
+                                
+                                    Circle()
+                                        .fill(type.color)
+                                        .frame(width: 8, height: 8)
+                                    Text(type.typeName.capitalized)
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Text("Weight: \(pokemon.formattedWeight)")
+                                .font(.body)
+                                .foregroundColor(.white)
+                            
+                            Text("Height: \(pokemon.formattedHeight)")
+                                .font(.body)
+                                .foregroundColor(.white)
+                          
+                            
+//                            Text("Type: \(pokemon.typeNames)")
+//                                .font(.body)
+//                                .foregroundColor(.white)
+                            
+                            Text(flavorText ?? "Haris has a little weedle")
+                                .font(.body)
+                                .foregroundColor(.white)
+                        }
+                        .foregroundColor(.black)
+                        .padding()
+                    }
+                    
+                    // Stats Section
+                    VStack(spacing: 15) {
+                        Text("Stats")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 20)
+                        
+                        ZStack {
+                            Color.black
+                                .opacity(0.8)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .shadow(radius: 10)
+                                .frame(width: 330, height: 270)
+                            
+                            VStack(spacing: 10) {
+                                StatBarView(
+                                    statName: "HP", value: pokemon.hp,
+                                    barColor: .red
+                                )
+                                StatBarView(
+                                    statName: "Att.", value: pokemon.attack,
+                                    barColor: .orange
+                                )
+                                StatBarView(
+                                    statName: "Def.", value: pokemon.defense,
+                                    barColor: .yellow.opacity(0.8)
+                                )
+                                StatBarView(
+                                    statName: "Sp. Att.",
+                                    value: pokemon.specialAttack,
+                                    barColor: .blue
+                                )
+                                StatBarView(
+                                    statName: "Sp. Def",
+                                    value: pokemon.specialDefense,
+                                    barColor: .green
+                                )
+                                StatBarView(
+                                    statName: "Speed", value: pokemon.speed,
+                                    barColor: .purple
+                                )
+//                                StatBarView(
+//                                    statName: "Height", value: Int(pokemon.height/10),
+//                                    barColor: .gray
+//                                )
+//                                StatBarView(
+//                                    statName: "Weight", value: Int(pokemon.weight/10),
+//                                    barColor: .gray
+//                                )
+                            }
+                            .padding()
+                        }
+                    }
+
                     
                     Spacer()
-                }  // end of main vstack containing stats image and else
-            }  //end of background zstack
-        }  // end of scroll view
-    }  // end of some view
-}  // end of detail view struct
-
-struct StatBarView: View {
-    let statName: String
-    let value: Int
-    let barColor: Color
-
-    var body: some View {
-        HStack {
-            Text("\(statName):")
-                .font(.title2)
-                .frame(width: 100, alignment: .leading)
-
-            ProgressView(value: Double(value), total: 255)
-                .progressViewStyle(LinearProgressViewStyle(tint: barColor))
-                .frame(width: 120, height: 20)
-
-            Text("\(value)")
-                .font(.caption)
-                .frame(width: 35, alignment: .trailing)
+                }
+                .padding(.top, 80)
+                
+            }   /*.navigationBarHidden(true)*/
+//                .navigationBarBackButtonHidden(false)
+        }
+      
+//        onAppear {
+//            fetchFlavorText()
+        }
+   
+     
+    }
+    
+//    
+//    private func fetchFlavorText() {
+//        let api = PokeAPI()
+//        api.getFlavorText(for: pokemon.id) { fetchedFlavorText in
+//            DispatchQueue.main.async {
+//                self.flavorText = fetchedFlavorText
+//            }
+//        }
+//    }
+    
+    
+    struct StatBarView: View {
+        let statName: String
+        let value: Int
+        let barColor: Color
+        
+        var body: some View {
+            HStack {
+                Text("\(statName):")
+                    .font(.body)
+                    .frame(width: 80, alignment: .leading)
+                
+                ProgressView(value: Double(value), total: 200)
+                    .progressViewStyle(LinearProgressViewStyle(tint: barColor))
+                    .frame(width: 150, height: 20)
+                
+                Text("\(value)")
+                    .font(.body)
+                    .frame(width: 35, alignment: .trailing)
+            }
         }
     }
-}
 
-#Preview {
-    let samplePokemon = PokemonModel(
-        id: 1,
-        name: "bulbasaur",
-        url: "https://pokeapi.co/api/v2/pokemon/1",
-        imageURL:
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-        weight: 69,
-        height: 7,
-        stats: [
-            StatModel(baseStat: 45, effort: 0, statName: "hp"),
-            StatModel(baseStat: 49, effort: 0, statName: "attack"),
-            StatModel(baseStat: 49, effort: 0, statName: "defense"),
-            StatModel(baseStat: 65, effort: 0, statName: "special-attack"),
-            StatModel(baseStat: 65, effort: 0, statName: "special-defense"),
-            StatModel(baseStat: 45, effort: 0, statName: "speed"),
-        ],
-        types: [
-            TypeModel(slot: 1, typeName: "grass"),
-            TypeModel(slot: 2, typeName: "poison"),
-        ]
-    )
-    PokemonDetailView(pokemon: samplePokemon)
-}

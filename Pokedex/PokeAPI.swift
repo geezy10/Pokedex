@@ -7,6 +7,37 @@
 
 import Foundation
 
+
+struct PokemonSpeciesDTO: Codable {
+    let flavorTextEntries: [FlavorText]
+
+    enum CodingKeys: String, CodingKey {
+        case flavorTextEntries = "flavor_text_entries"
+    }
+}
+
+struct FlavorText: Codable {
+    let flavorText: String
+    let language: Language
+    let version: Version
+
+    enum CodingKeys: String, CodingKey {
+        case flavorText = "flavor_text"
+        case language
+        case version
+    }
+}
+
+struct Language: Codable {
+    let name: String
+}
+
+struct Version: Codable {
+    let name: String
+}
+
+
+
 // Represents the main list response, containing an array of PokemonDTO
 struct PokemonsDTO: Codable {
     let results: [PokemonDTO]
@@ -28,6 +59,7 @@ struct PokemonDetailDTO: Codable {
     let types: [TypeElement]
 }
 
+//Represents the type of a pokemon
 struct TypeElement: Codable {
     let slot: Int
     let type: TypeInfo
@@ -74,13 +106,13 @@ class PokeAPI {
 
     func getPokemons(forGeneration generation: Int, completion: @escaping (PokemonDTO) -> Void) {
         // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
-//        if let cachedPokemons = cachedPokemons {
-//            for pokemon in cachedPokemons {
-//                completion(pokemon)
-//            }
-//            return
-//        }
-//
+        if let cachedPokemons = cachedPokemons {
+            for pokemon in cachedPokemons {
+                completion(pokemon)
+            }
+            return
+        }
+
         cachedPokemons = nil
         
         let url: URL?
@@ -168,7 +200,37 @@ class PokeAPI {
                 print("Error decoding PokemonDetailDTO:", error)
             }
         }.resume()
+        
     }
+    func getFlavorText(for pokemonID: Int, completion: @escaping (String?) -> Void) {
+            let urlString = "https://pokeapi.co/api/v2/pokemon-species/\(pokemonID)/"
+            guard let url = URL(string: urlString) else {
+                print("Invalid URL")
+                completion(nil)
+                return
+            }
+
+            URLSession.shared.dataTask(with: url) { data, response, error in
+                guard let data = data else {
+                    print("No data received from API")
+                    completion(nil)
+                    return
+                }
+
+                do {
+                    let speciesData = try JSONDecoder().decode(PokemonSpeciesDTO.self, from: data)
+                    // Find the first English flavor text
+                    if let flavorEntry = speciesData.flavorTextEntries.first(where: { $0.language.name == "en" }) {
+                        completion(flavorEntry.flavorText)
+                    } else {
+                        completion(nil)
+                    }
+                } catch {
+                    print("Error decoding PokemonSpeciesDTO:", error)
+                    completion(nil)
+                }
+            }.resume()
+        }
 }
 
 //class ImageAPI {
