@@ -18,6 +18,7 @@ struct PokemonDetailView: View {
             .ignoresSafeArea()
             
             ScrollView {
+
                 VStack(spacing: 20) {
                     
                     // Pokemon Image Card
@@ -38,6 +39,7 @@ struct PokemonDetailView: View {
                         Text("No Image Available")
                             .font(.caption)
                     }
+
                     
                     // Pokemon Info Card
                     ZStack {
@@ -146,6 +148,7 @@ struct PokemonDetailView: View {
                             .padding()
                         }
                     }
+
                     
                     Spacer()
                 }
