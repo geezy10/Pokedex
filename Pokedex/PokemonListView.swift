@@ -28,6 +28,7 @@ struct PokemonListView: View {
                         .scaledToFit()
                         .frame(width: 200, height: 100)
                 }
+                
 
                 TextField("Search Pokemon", text: $searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -39,7 +40,7 @@ struct PokemonListView: View {
                 }) {
                     Text("Select Generation: Gen \(selectedGen)")
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.gray)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.black)
