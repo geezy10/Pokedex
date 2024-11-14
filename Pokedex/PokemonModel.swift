@@ -31,6 +31,11 @@ class PokemonModel {
         self.flavorText = flavorText
 
     }
+    
+    // Check if the flavor text has been loaded
+       var isFlavorTextLoaded: Bool {
+           flavorText != nil && !flavorText!.isEmpty
+       }
 
     // Computed property to get a formatted string of type names
     var typeNames: String {
@@ -118,4 +123,6 @@ class TypeModel: Identifiable {
         default: return .gray
         }
     }
+    
+    
 }

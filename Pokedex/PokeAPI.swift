@@ -241,15 +241,3 @@ class PokeAPI {
         }.resume()
     }
 }
-
-//class ImageAPI {
-//    func getData(url: String, completion: @escaping (Data?) -> Void) {
-//        guard let url = URL(string: url) else { return }
-//
-//        URLSession.shared.dataTask(with: url) { data, response, error in
-//            DispatchQueue.main.async {
-//                completion(data)
-//            }
-//        }.resume()
-//    }
-//}

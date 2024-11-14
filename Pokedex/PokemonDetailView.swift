@@ -2,8 +2,8 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     let pokemon: PokemonModel
-    @State var flavorText: String? = nil
-    
+//    @State var flavorText: String? = nil
+
     var body: some View {
         ZStack {
             // Background Gradient
@@ -18,7 +18,7 @@ struct PokemonDetailView: View {
             .ignoresSafeArea()
             
             ScrollView {
-
+                
                 VStack(spacing: 20) {
                     
                     // Pokemon Image Card
@@ -39,7 +39,6 @@ struct PokemonDetailView: View {
                         Text("No Image Available")
                             .font(.caption)
                     }
-
                     
                     // Pokemon Info Card
                     ZStack {
@@ -58,12 +57,11 @@ struct PokemonDetailView: View {
                                     .font(.system(size: 20, weight: .bold))
                                     .font(.headline).foregroundColor(.primary)
                                     .font(.largeTitle)
-                              
-                                 
-                                }.fixedSize()
-                            HStack(spacing: 4) {
-                            ForEach(pokemon.types) { type in
                                 
+                            }.fixedSize()
+                            HStack(spacing: 4) {
+                                ForEach(pokemon.types) { type in
+                                    
                                     Circle()
                                         .fill(type.color)
                                         .frame(width: 8, height: 8)
@@ -79,19 +77,23 @@ struct PokemonDetailView: View {
                             Text("Height: \(pokemon.formattedHeight)")
                                 .font(.body)
                                 .foregroundColor(.white)
-                          
                             
-//                            Text("Type: \(pokemon.typeNames)")
-//                                .font(.body)
-//                                .foregroundColor(.white)
+                            Text("Type: \(pokemon.typeNames)")
+                                .font(.body)
+                                .foregroundColor(.white)
                             
-                            Text(flavorText ?? "Haris has a little weedle")
+                            //                            Text(
+                            //                                pokemon.flavorText
+                            //                                    ?? "Haris has a little weedle"
+                            //                            )
                                 .font(.body)
                                 .foregroundColor(.white)
                         }
                         .foregroundColor(.black)
                         .padding()
                     }
+                    
+                    
                     
                     // Stats Section
                     VStack(spacing: 15) {
@@ -136,36 +138,23 @@ struct PokemonDetailView: View {
                                     statName: "Speed", value: pokemon.speed,
                                     barColor: .purple
                                 )
-//                                StatBarView(
-//                                    statName: "Height", value: Int(pokemon.height/10),
-//                                    barColor: .gray
-//                                )
-//                                StatBarView(
-//                                    statName: "Weight", value: Int(pokemon.weight/10),
-//                                    barColor: .gray
-//                                )
                             }
                             .padding()
                         }
                     }
-
                     
                     Spacer()
                 }
                 .padding(.top, 80)
-                
-            }   /*.navigationBarHidden(true)*/
-//                .navigationBarBackButtonHidden(false)
+                //        onAppear {
+                //            if pokemon.flavorText == nil {
+                //                fetchFlavorText()
+                //            }
+                //
+                //        }
+            }
         }
-      
-//        onAppear {
-//            fetchFlavorText()
-        }
-   
-     
     }
-    
-//    
 //    private func fetchFlavorText() {
 //        let api = PokeAPI()
 //        api.getFlavorText(for: pokemon.id) { fetchedFlavorText in
@@ -174,23 +163,22 @@ struct PokemonDetailView: View {
 //            }
 //        }
 //    }
-    
-    
+
     struct StatBarView: View {
         let statName: String
         let value: Int
         let barColor: Color
-        
+
         var body: some View {
             HStack {
                 Text("\(statName):")
                     .font(.body)
                     .frame(width: 80, alignment: .leading)
-                
+
                 ProgressView(value: Double(value), total: 200)
                     .progressViewStyle(LinearProgressViewStyle(tint: barColor))
                     .frame(width: 150, height: 20)
-                
+
                 Text("\(value)")
                     .font(.body)
                     .frame(width: 35, alignment: .trailing)
@@ -198,3 +186,4 @@ struct PokemonDetailView: View {
         }
     }
 
+}

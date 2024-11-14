@@ -16,7 +16,6 @@ struct PokemonListView: View {
     @State var showGenSelector = false
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
-    //    let imageAPI = ImageAPI()
 
     var body: some View {
 
@@ -28,7 +27,6 @@ struct PokemonListView: View {
                         .scaledToFit()
                         .frame(width: 200, height: 100)
                 }
-                
 
                 TextField("Search Pokemon", text: $searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -40,10 +38,10 @@ struct PokemonListView: View {
                 }) {
                     Text("Select Generation: Gen \(selectedGen)")
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.black)
+                        .background(Color.gray).opacity(0.3)
                         .cornerRadius(8)
                         .padding(.horizontal)
                 }
@@ -102,24 +100,23 @@ struct PokemonListView: View {
                     .listRowSeparator(.hidden)
 
                 }
-
-                .onAppear {
-                    fetchfromAPI()
-                    }
-                }
+            }
             .sheet(isPresented: $showGenSelector) {
-                GenerationSelectorView(selectedGen: $selectedGen,showGenerationSelector: $showGenSelector,fetchfromAPI: fetchfromAPI)
+                GenerationSelectorView(
+                    selectedGen: $selectedGen,
+                    showGenerationSelector: $showGenSelector,
+                    fetchfromAPI: fetchfromAPI)
             }
         }
     }
 
     private func fetchfromAPI() {
-        
+
         for pokemon in pokemons {
             modelContext.delete(pokemon)
         }
         try? modelContext.save()
-        
+
         print("Loading from API...")
         pokeAPI.getPokemons(forGeneration: selectedGen) { pokemonDTO in
             if !pokemons.contains(where: { $0.name == pokemonDTO.name }) {
@@ -184,7 +181,7 @@ struct PokemonListView: View {
         var body: some View {
             VStack(spacing: 20) {
                 ScrollView(.vertical, showsIndicators: false) {
-                    
+
                     Text("Select Pokémon Generation")
                         .font(.headline)
                         .padding()
@@ -229,7 +226,9 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
 
         PokemonListView()
-            .modelContainer(for: [PokemonModel.self, StatModel.self, TypeModel.self])
+            .modelContainer(for: [
+                PokemonModel.self, StatModel.self, TypeModel.self,
+            ])
             .preferredColorScheme(.dark)
             .previewDisplayName("View List in Dark Mode")
 
