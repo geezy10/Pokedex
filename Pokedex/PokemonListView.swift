@@ -102,9 +102,6 @@ struct PokemonListView: View {
 
                 }
 
-                .onAppear {
-                    fetchfromAPI()
-                    }
                 }
             .sheet(isPresented: $showGenSelector) {
                 GenerationSelectorView(selectedGen: $selectedGen,showGenerationSelector: $showGenSelector,fetchfromAPI: fetchfromAPI)
