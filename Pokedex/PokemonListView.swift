@@ -16,7 +16,6 @@ struct PokemonListView: View {
     @State var showGenSelector = false
     @Environment(\.modelContext) var modelContext
     let pokeAPI = PokeAPI()
-    //    let imageAPI = ImageAPI()
 
     var body: some View {
 

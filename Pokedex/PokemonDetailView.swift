@@ -136,14 +136,7 @@ struct PokemonDetailView: View {
                                     statName: "Speed", value: pokemon.speed,
                                     barColor: .purple
                                 )
-//                                StatBarView(
-//                                    statName: "Height", value: Int(pokemon.height/10),
-//                                    barColor: .gray
-//                                )
-//                                StatBarView(
-//                                    statName: "Weight", value: Int(pokemon.weight/10),
-//                                    barColor: .gray
-//                                )
+//                               
                             }
                             .padding()
                         }
@@ -154,12 +147,9 @@ struct PokemonDetailView: View {
                 }
                 .padding(.top, 80)
                 
-            }   /*.navigationBarHidden(true)*/
-//                .navigationBarBackButtonHidden(false)
+            }
         }
-      
-//        onAppear {
-//            fetchFlavorText()
+    
         }
    
      
