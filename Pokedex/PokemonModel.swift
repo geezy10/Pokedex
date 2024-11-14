@@ -17,7 +17,8 @@ class PokemonModel {
 
     init(
         id: Int, name: String, url: String, imageURL: String, weight: Double,
-        height: Double, stats: [StatModel], types: [TypeModel], flavorText: String? = nil
+        height: Double, stats: [StatModel], types: [TypeModel],
+        flavorText: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -28,17 +29,17 @@ class PokemonModel {
         self.weight = weight
         self.types = types
         self.flavorText = flavorText
-        
+
     }
 
     // Computed property to get a formatted string of type names
     var typeNames: String {
         types.map { $0.typeName.capitalized }.joined(separator: ", ")
     }
-     //Computed property to get the colors for the gradient based on types
-        var typeColors: [Color] {
-            types.prefix(2).map { $0.color } // Use only the first two types, if they exist
-        }
+    //Computed property to get the colors for the gradient based on types
+    var typeColors: [Color] {
+        types.prefix(2).map { $0.color }  // Use only the first two types, if they exist
+    }
     var formattedWeight: String {
         String(format: "%.1f kg", weight / 10)
     }

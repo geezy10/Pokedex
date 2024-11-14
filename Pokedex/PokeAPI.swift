@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct PokemonSpeciesDTO: Codable {
     let flavorTextEntries: [FlavorText]
 
@@ -35,8 +34,6 @@ struct Language: Codable {
 struct Version: Codable {
     let name: String
 }
-
-
 
 // Represents the main list response, containing an array of PokemonDTO
 struct PokemonsDTO: Codable {
@@ -99,51 +96,57 @@ struct StatName: Codable {
 }
 
 class PokeAPI {
-    
 
     //to cache pokemons, so we don´t make unnessecary API calls, private(set) -> read only property
     private(set) var cachedPokemons: [PokemonDTO]?
 
-    func getPokemons(forGeneration generation: Int, completion: @escaping (PokemonDTO) -> Void) {
-        // check if there are cached pokemons, then loop trough each pokemon and call the completion handler for every pokemon
-        if let cachedPokemons = cachedPokemons {
-            for pokemon in cachedPokemons {
-                completion(pokemon)
-            }
-            return
-        }
-
+    func getPokemons(
+        forGeneration generation: Int,
+        completion: @escaping (PokemonDTO) -> Void
+    ) {
         cachedPokemons = nil
-        
-        let url: URL?
-               switch generation {
-               case 1:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
-               case 2:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100&offset=151")
-               case 3:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=135&offset=251")
-               case 4:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=107&offset=386")
-               case 5:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=156&offset=493")
-               case 6:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=72&offset=649")
-               case 7:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=88&offset=721")
-               case 8:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=96&offset=809")
-               case 9:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=105&offset=905")
-               default:
-                   url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
-               }
 
-        
+        let url: URL?
+        switch generation {
+        case 1:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
+        case 2:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=100&offset=151"
+            )
+        case 3:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=135&offset=251"
+            )
+        case 4:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=107&offset=386"
+            )
+        case 5:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=156&offset=493"
+            )
+        case 6:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=72&offset=649")
+        case 7:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=88&offset=721")
+        case 8:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=96&offset=809")
+        case 9:
+            url = URL(
+                string: "https://pokeapi.co/api/v2/pokemon?limit=105&offset=905"
+            )
+        default:
+            url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151")
+        }
 
         //guard checks if the URL is available, guards that it don´t crash, also possible with just an if
         guard
-            let url = url 
+            let url = url
         else {
             print("Invalid URL")
             return
@@ -200,37 +203,43 @@ class PokeAPI {
                 print("Error decoding PokemonDetailDTO:", error)
             }
         }.resume()
-        
+
     }
-    func getFlavorText(for pokemonID: Int, completion: @escaping (String?) -> Void) {
-            let urlString = "https://pokeapi.co/api/v2/pokemon-species/\(pokemonID)/"
-            guard let url = URL(string: urlString) else {
-                print("Invalid URL")
+    func getFlavorText(
+        for pokemonID: Int, completion: @escaping (String?) -> Void
+    ) {
+        let urlString =
+            "https://pokeapi.co/api/v2/pokemon-species/\(pokemonID)/"
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            completion(nil)
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data else {
+                print("No data received from API")
                 completion(nil)
                 return
             }
 
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                guard let data = data else {
-                    print("No data received from API")
-                    completion(nil)
-                    return
-                }
-
-                do {
-                    let speciesData = try JSONDecoder().decode(PokemonSpeciesDTO.self, from: data)
-                    // Find the first English flavor text
-                    if let flavorEntry = speciesData.flavorTextEntries.first(where: { $0.language.name == "en" }) {
-                        completion(flavorEntry.flavorText)
-                    } else {
-                        completion(nil)
-                    }
-                } catch {
-                    print("Error decoding PokemonSpeciesDTO:", error)
+            do {
+                let speciesData = try JSONDecoder().decode(
+                    PokemonSpeciesDTO.self, from: data)
+                // Find the first English flavor text
+                if let flavorEntry = speciesData.flavorTextEntries.first(
+                    where: { $0.language.name == "en" })
+                {
+                    completion(flavorEntry.flavorText)
+                } else {
                     completion(nil)
                 }
-            }.resume()
-        }
+            } catch {
+                print("Error decoding PokemonSpeciesDTO:", error)
+                completion(nil)
+            }
+        }.resume()
+    }
 }
 
 //class ImageAPI {
