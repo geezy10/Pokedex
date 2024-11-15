@@ -10,15 +10,13 @@ class PokemonModel {
     var height: Double
     var weight: Double
     var imageURL: String?
-    var flavorText: String?
 
     @Relationship var stats: [StatModel]
     @Relationship var types: [TypeModel]
 
     init(
         id: Int, name: String, url: String, imageURL: String, weight: Double,
-        height: Double, stats: [StatModel], types: [TypeModel],
-        flavorText: String? = nil
+        height: Double, stats: [StatModel], types: [TypeModel]
     ) {
         self.id = id
         self.name = name
@@ -28,7 +26,7 @@ class PokemonModel {
         self.height = height
         self.weight = weight
         self.types = types
-        self.flavorText = flavorText
+    
 
     }
 
@@ -118,4 +116,5 @@ class TypeModel: Identifiable {
         default: return .gray
         }
     }
+
 }
