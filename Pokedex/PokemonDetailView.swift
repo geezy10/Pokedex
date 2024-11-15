@@ -154,7 +154,7 @@ struct PokemonDetailView: View {
         }
     
         }
-    }
+    
     struct StatBarView: View {
         let statName: String
         let value: Int
@@ -177,4 +177,4 @@ struct PokemonDetailView: View {
         }
     }
 
-}
+
