@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     let pokemon: PokemonModel
-//    @State var flavorText: String? = nil
+    //    @State var flavorText: String? = nil
 
     var body: some View {
         ZStack {
@@ -10,21 +10,21 @@ struct PokemonDetailView: View {
             LinearGradient(
                 gradient: Gradient(
                     colors: pokemon.typeColors.count > 1
-                    ? pokemon.typeColors
-                    : [pokemon.typeColors.first ?? .red, .white]),
+                        ? pokemon.typeColors
+                        : [pokemon.typeColors.first ?? .red, .white]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-            
+
             ScrollView {
-                
+
                 VStack(spacing: 20) {
-                    
+
                     // Pokemon Image Card
-                    
+
                     if let imageURL = pokemon.imageURL,
-                       let url = URL(string: imageURL)
+                        let url = URL(string: imageURL)
                     {
                         AsyncImage(url: url) { image in
                             image
@@ -39,7 +39,7 @@ struct PokemonDetailView: View {
                         Text("No Image Available")
                             .font(.caption)
                     }
-                    
+
                     // Pokemon Info Card
                     ZStack {
                         Color.black
@@ -47,7 +47,7 @@ struct PokemonDetailView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                             .shadow(radius: 10)
                             .frame(width: 300, height: 180)
-                        
+
                         VStack(spacing: 8) {
                             HStack {
                                 Text("#\(pokemon.id)").font(.subheadline)
@@ -57,11 +57,11 @@ struct PokemonDetailView: View {
                                     .font(.system(size: 20, weight: .bold))
                                     .font(.headline).foregroundColor(.primary)
                                     .font(.largeTitle)
-                                
+
                             }.fixedSize()
                             HStack(spacing: 4) {
                                 ForEach(pokemon.types) { type in
-                                    
+
                                     Circle()
                                         .fill(type.color)
                                         .frame(width: 8, height: 8)
@@ -73,28 +73,20 @@ struct PokemonDetailView: View {
                             Text("Weight: \(pokemon.formattedWeight)")
                                 .font(.body)
                                 .foregroundColor(.white)
-                            
+
                             Text("Height: \(pokemon.formattedHeight)")
                                 .font(.body)
                                 .foregroundColor(.white)
-                            
+
                             Text("Type: \(pokemon.typeNames)")
                                 .font(.body)
                                 .foregroundColor(.white)
-                            
-                            //                            Text(
-                            //                                pokemon.flavorText
-                            //                                    ?? "Haris has a little weedle"
-                            //                            )
-                                .font(.body)
-                                .foregroundColor(.white)
+
                         }
                         .foregroundColor(.black)
                         .padding()
                     }
-                    
-                    
-                    
+
                     // Stats Section
                     VStack(spacing: 15) {
                         Text("Stats")
@@ -103,14 +95,14 @@ struct PokemonDetailView: View {
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 20)
-                        
+
                         ZStack {
                             Color.black
                                 .opacity(0.8)
                                 .clipShape(RoundedRectangle(cornerRadius: 20))
                                 .shadow(radius: 10)
                                 .frame(width: 330, height: 270)
-                            
+
                             VStack(spacing: 10) {
                                 StatBarView(
                                     statName: "HP", value: pokemon.hp,
@@ -142,28 +134,21 @@ struct PokemonDetailView: View {
                             .padding()
                         }
                     }
-                    
+
                     Spacer()
                 }
                 .padding(.top, 80)
-                //        onAppear {
-                //            if pokemon.flavorText == nil {
-                //                fetchFlavorText()
-                //            }
-                //
-                //        }
+
+            }
+            .onAppear {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithTransparentBackground()  // Transparent background
+                appearance.backgroundColor = .clear  // No color for background
+                UINavigationBar.appearance().scrollEdgeAppearance = appearance
+                UINavigationBar.appearance().standardAppearance = appearance
             }
         }
     }
-//    private func fetchFlavorText() {
-//        let api = PokeAPI()
-//        api.getFlavorText(for: pokemon.id) { fetchedFlavorText in
-//            DispatchQueue.main.async {
-//                self.flavorText = fetchedFlavorText
-//            }
-//        }
-//    }
-
     struct StatBarView: View {
         let statName: String
         let value: Int
