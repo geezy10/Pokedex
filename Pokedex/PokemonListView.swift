@@ -100,7 +100,11 @@ struct PokemonListView: View {
                     .listRowSeparator(.hidden)
 
                 }
+
             }
+
+                }
+
             .sheet(isPresented: $showGenSelector) {
                 GenerationSelectorView(
                     selectedGen: $selectedGen,

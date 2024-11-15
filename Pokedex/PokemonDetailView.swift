@@ -130,7 +130,7 @@ struct PokemonDetailView: View {
                                     statName: "Speed", value: pokemon.speed,
                                     barColor: .purple
                                 )
-                            }
+                        }
                             .padding()
                         }
                     }
@@ -138,6 +138,7 @@ struct PokemonDetailView: View {
                     Spacer()
                 }
                 .padding(.top, 80)
+
 
             }
             .onAppear {
@@ -147,6 +148,11 @@ struct PokemonDetailView: View {
                 UINavigationBar.appearance().scrollEdgeAppearance = appearance
                 UINavigationBar.appearance().standardAppearance = appearance
             }
+
+                
+            }
+        }
+    
         }
     }
     struct StatBarView: View {
