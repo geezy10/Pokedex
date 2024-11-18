@@ -55,7 +55,7 @@ struct PokemonDetailView: View {
                                     .font(.title)
                                 Text(pokemon.name.capitalized)
                                     .font(.system(size: 20, weight: .bold))
-                                    .font(.headline).foregroundColor(.primary)
+                                    .font(.headline).foregroundColor(.white)
                                     .font(.largeTitle)
 
                             }.fixedSize()
@@ -67,7 +67,7 @@ struct PokemonDetailView: View {
                                         .frame(width: 8, height: 8)
                                     Text(type.typeName.capitalized)
                                         .font(.footnote)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.white)
                                 }
                             }
                             Text("Weight: \(pokemon.formattedWeight)")
@@ -95,6 +95,7 @@ struct PokemonDetailView: View {
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 20)
+                            .opacity(0.75)
 
                         ZStack {
                             Color.black
@@ -130,7 +131,7 @@ struct PokemonDetailView: View {
                                     statName: "Speed", value: pokemon.speed,
                                     barColor: .purple
                                 )
-                        }
+                            }.foregroundColor(.white)
                             .padding()
                         }
                     }

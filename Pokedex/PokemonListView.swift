@@ -38,10 +38,10 @@ struct PokemonListView: View {
                 }) {
                     Text("Select Generation: Gen \(selectedGen)")
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.gray).opacity(0.3)
+                        .background(Color.gray).opacity(0.4)
                         .cornerRadius(8)
                         .padding(.horizontal)
                 }
