@@ -101,9 +101,11 @@ struct PokemonListView: View {
                     
                 }
                 
+            }.onAppear {
+                if pokemons.isEmpty {
+                    fetchfromAPI()
+                }
             }
-            
-            
             
             .sheet(isPresented: $showGenSelector) {
                 GenerationSelectorView(
